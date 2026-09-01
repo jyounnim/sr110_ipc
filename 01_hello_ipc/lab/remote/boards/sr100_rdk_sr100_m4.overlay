@@ -1,0 +1,10 @@
+/*
+ * Lab 01 CLIENT (M4) overlay.
+ * ipc0 shared-memory-size must match the M55-side overlay exactly.
+ * LED0/i2c1/gpio_exp0 are already enabled in the board's base dts, so no
+ * extra configuration is needed here.
+ */
+
+&ipc0 {
+	shared-memory-size = <0x400>;
+};

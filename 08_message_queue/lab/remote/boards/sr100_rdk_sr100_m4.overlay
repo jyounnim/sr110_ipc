@@ -1,0 +1,4 @@
+/* ipc0 shared-memory-size must match the M55 overlay in boards/ exactly. */
+&ipc0 {
+	shared-memory-size = <0x400>;
+};

@@ -1,0 +1,25 @@
+/* ipc0 shared-memory-size must match the M55 overlay in boards/ exactly. */
+&ipc0 {
+	shared-memory-size = <0x400>;
+};
+
+/*
+ * The onboard MC3419 accelerometer node (labeled "mc3479" in the base
+ * board dts, on i2c1 @ 0x4c) defaults to status = "disabled" in both the
+ * M4 and M55 base dts. It must be explicitly re-enabled here on the M4
+ * side (M4 owns i2c1 in this curriculum -- see the i2c1 disable in the
+ * M55 overlay). Without this, DEVICE_DT_GET_OR_NULL() on the node returns
+ * NULL and main() bails out with "accel device not ready".
+ * (2026-08-31, confirmed during Lab 09 hardware testing.)
+ *
+ * The node's int-gpios points at gpio_exp0's pin 4, but that path is only
+ * exercised if the driver's own interrupt-driven trigger mode
+ * (CONFIG_MC3419_TRIGGER_OWN_THREAD) is enabled. This lab polls the
+ * sensor with sensor_sample_fetch() instead (CONFIG_MC3419_TRIGGER is
+ * left at its default of "none"), so the earlier finding that
+ * gpio_exp0 itself has no int-gpios wired up on M4 (see Lab 02/05/06)
+ * doesn't come into play here.
+ */
+&mc3479 {
+	status = "okay";
+};

@@ -1,0 +1,14 @@
+/* ipc0 shared-memory-size must match the M55 overlay in boards/ exactly. */
+&ipc0 {
+	shared-memory-size = <0x400>;
+};
+
+/*
+ * The onboard MC3419 accelerometer node (labeled "mc3479" in the base
+ * board dts, on i2c1 @ 0x4c) defaults to status = "disabled" in both the
+ * M4 and M55 base dts and must be explicitly re-enabled here.
+ * (2026-08-31, confirmed during Lab 09 hardware testing.)
+ */
+&mc3479 {
+	status = "okay";
+};

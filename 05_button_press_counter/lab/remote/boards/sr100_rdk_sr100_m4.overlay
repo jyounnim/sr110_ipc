@@ -1,0 +1,20 @@
+/* ipc0 shared-memory-size must match the M55 overlay in boards/ exactly. */
+&ipc0 {
+	shared-memory-size = <0x400>;
+};
+
+/*
+ * On the M4 side, gpio_exp0 (PCAL6416A) has no int-gpios wired up in the
+ * base board dts, so the driver's pin_interrupt_configure() always returns
+ * -ENOTSUP for pins on this expander (see gpio_pcal64xxa.c: it only wires
+ * up interrupt support when the DT node has an int-gpios property). Since
+ * user_button sits behind gpio_exp0, the default interrupt-driven
+ * "gpio-keys" mode can never work here — switch it to polling instead.
+ * Must be applied to the parent gpio-keys node (&buttons), not the child
+ * button node (&user_button), or a devicetree binding validation error
+ * results.
+ * (Same issue as Lab 02, confirmed 2026-08-31.)
+ */
+&buttons {
+	polling-mode;
+};

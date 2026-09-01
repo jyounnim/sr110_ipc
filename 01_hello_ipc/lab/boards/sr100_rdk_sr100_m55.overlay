@@ -1,0 +1,42 @@
+/*
+ * Lab 01 HOST (M55) overlay.
+ * ipc0 shared-memory-size must match the M4-side overlay exactly.
+ * (This lab only sends a 4-byte message, so the default would be enough,
+ *  but it's pre-set to 1KB here to keep the MTU consistent with later labs.)
+ */
+
+&ipc0 {
+	shared-memory-size = <0x400>;
+};
+
+/*
+ * M4 and M55 physically share the same I2C1 bus (SCL/SDA pins) —
+ * i2c1_ms_scl_b / i2c1_ms_sda_b are identical in both dts files. To make
+ * only M4 actually drive gpio_exp0 (PCA6416A, which LED0/LED1/the button
+ * hang off of), i2c1 is disabled on the M55 side to avoid a bus-init
+ * conflict at boot.
+ * (2026-08-30, issue found during Lab 01 hardware testing — applied to
+ *  all labs)
+ */
+
+&i2c1 {
+	status = "disabled";
+};
+
+/*
+ * Disabling the parent bus (i2c1) alone isn't enough — a child node keeps
+ * its default status of "okay" unless it has its own status set, so the
+ * driver still treats it as an "active instance" and tries to compile it
+ * in; DT_BUS() then fails to find the (disabled) i2c1 device handle,
+ * causing a build error
+ * (2026-08-30, confirmed during Lab 01 hardware testing: gpio_pcal64xxa.c
+ *  build failure). The child nodes must be disabled explicitly too.
+ */
+
+&gpio_exp0 {
+	status = "disabled";
+};
+
+&ov02c10 {
+	status = "disabled";
+};
