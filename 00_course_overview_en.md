@@ -19,7 +19,26 @@ This document is the map for the whole curriculum. See the lesson document insid
 - M55: `sr100_rdk/sr100/m55` — the HOST core. In most labs, this is the side that kicks off the scenario.
 - M4: `sr100_rdk/sr100/m4` — the CLIENT/REMOTE core. In most labs, this is the side that physically drives the peripherals (GPIO, I2C sensors, SPI, etc.).
 - M4 and M55 **physically share the I2C1 bus** on this board. Because of that, every lab that touches a device on I2C1 (LEDs, buttons, the accelerometer) disables `&i2c1`, `&gpio_exp0` (and its relevant child nodes) in the M55 overlay, leaving ownership of the bus to whichever core actually drives it (usually M4). The background for this is covered in detail in the [Lab 01 troubleshooting document](01_hello_ipc/doc/01_hello_ipc_troubleshooting_en.md).
-- Each core prints to its own independent UART console (230400 bps, 8N1). It's worth keeping both the M55 and M4 consoles open side by side while working through a lab, so you can see both sides of the conversation at once.
+- Each core prints to its own independent UART console. It's worth keeping both the M55 and M4 consoles open side by side while working through a lab, so you can see both sides of the conversation at once — see the section right below for exactly how to wire each one up and at what baud rate.
+
+## Connecting the M4 / M55 serial consoles
+
+The two cores' consoles are reached in different ways. Wire up one of the methods below before starting a lab, and keep both consoles open at once while you work.
+
+### M4 console
+
+M4 is only reachable through an external USB-to-TTL converter (e.g. a CH340-based one).
+
+- Header: **J24**
+- Wiring: pin 13 = M4 **TX**, pin 14 = M4 **RX**, plus GND (cross-connect: the converter's TX goes to the board's RX, and the converter's RX goes to the board's TX)
+- Baud rate: **230400 bps**, 8N1
+
+### M55 console (two options)
+
+M55 can be reached either directly through the board's built-in USB-C connector, or through a header with an external USB-to-TTL converter, the same way as M4. Note that the two methods run at different baud rates.
+
+1. **Direct USB-C (simplest)**: just plug a cable into the board's **J14** USB-C connector. Baud rate is **115200 bps**.
+2. **External USB-to-TTL converter**: same approach as M4, using the **J25** header — pin 13 = M55 **RX**, pin 14 = M55 **TX** (note the TX/RX pin numbers are swapped relative to M4's header). This way runs at **230400 bps**.
 
 ## Building (common to every lab)
 
